@@ -4,17 +4,10 @@ jobs:
   build:
     docker:
       - image: docker:18.06.1-ce-git
-    working_directory: ~/
+    working_directory: ~/CircleCI/docker-airflow
     steps:
       - checkout
-      - run:
-          name: Dependencies
-          command: docker build -t puckel/docker-airflow .
-  test:
-    docker:
-      - image: docker:18.06.1-ce-git
-    working_directory: ~/
-    steps:
-      - run:
-          name: Test
-          command: docker run puckel/docker-airflow version |grep '1.10.0'
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run: |
+          docker build -t puckel/docker-airflow .
