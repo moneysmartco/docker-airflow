@@ -38,7 +38,6 @@ RUN set -ex \
         build-essential \
         python3-pip \
         python3-requests \
-        default-libmysqlclient-dev \
         apt-utils \
         curl \
         rsync \
