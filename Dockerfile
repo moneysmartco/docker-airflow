@@ -1,4 +1,4 @@
-FROM python:3.7-slim-stretch
+FROM python:3.6-slim
 LABEL maintainer="moneysmartco"
 
 # Never prompts the user for choices on installation/configuration of packages
@@ -35,6 +35,8 @@ RUN set -ex \
         $buildDeps \
         freetds-bin \
         build-essential \
+        python3-pip \
+        python3-requests \
         default-libmysqlclient-dev \
         openssh-client \
         apt-utils \
@@ -67,5 +69,6 @@ RUN set -ex \
 COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 
 WORKDIR ${AIRFLOW_USER_HOME}
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["webserver"] # set default arg for entrypoint
