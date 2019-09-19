@@ -6,11 +6,11 @@ ENV DEBIAN_FRONTEND noninteractive
 ENV TERM linux
 
 # Airflow
-ARG AIRFLOW_VERSION=1.10.1
-ARG AIRFLOW_HOME=/usr/local/airflow
+ARG AIRFLOW_VERSION=1.10.4
+ARG AIRFLOW_USER_HOME=/usr/local/airflow
 ARG AIRFLOW_DEPS=""
 ARG PYTHON_DEPS=""
-ENV AIRFLOW_GPL_UNIDECODE yes
+ENV AIRFLOW_HOME=${AIRFLOW_USER_HOME}
 
 # Define en_US.
 ENV LANGUAGE en_US.UTF-8
@@ -38,6 +38,7 @@ RUN set -ex \
         python3-pip \
         python3-requests \
         default-libmysqlclient-dev \
+        openssh-client \
         apt-utils \
         curl \
         rsync \
@@ -52,7 +53,7 @@ RUN set -ex \
     && pip install ndg-httpsclient \
     && pip install pyasn1 \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc,mysql,ssh${AIRFLOW_DEPS:+,}${AIRFLOW_DEPS}]==${AIRFLOW_VERSION} \
-    && pip install 'redis>=2.10.5,<3' \
+    && pip install 'redis==3.2' \
     && if [ -n "${PYTHON_DEPS}" ]; then pip install ${PYTHON_DEPS}; fi \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get autoremove -yqq --purge \
@@ -65,8 +66,9 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
-COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
+COPY config/airflow.cfg ${AIRFLOW_USER_HOME}/airflow.cfg
 
-WORKDIR ${AIRFLOW_HOME}
+WORKDIR ${AIRFLOW_USER_HOME}
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["webserver"] # set default arg for entrypoint
